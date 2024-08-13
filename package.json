@@ -1,0 +1,18 @@
+{
+  "name": "api-filmes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js"
+  },
+  "author": "Victor Zornek",
+  "license": "ISC",
+  "description": "API de filmes desenvolvida para o desafio Explorer da Rocketseat",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
