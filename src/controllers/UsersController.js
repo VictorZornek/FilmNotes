@@ -2,7 +2,6 @@ const AppError = require('../utils/AppError');
 const { hash, compare } = require('bcryptjs'); // importação criptografia de senha
 
 const sqliteConnection = require('../database/sqlite');
-const { json } = require('express');
 
 class UsersController {
     async create(request, response) {
