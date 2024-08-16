@@ -10,12 +10,6 @@ class MovieNotesController {
             throw new AppError('Rating desse filme deve ser um número entre 1 e 5!');
         }
 
-        const checkTitle = await knex('movie_notes').where({ title });
-
-        if(checkTitle) {
-            throw new AppError('Este título já está cadastrado!')
-        }
-
         const [note_id] = await knex('movie_notes').insert({
             title,
             description,
@@ -52,28 +46,30 @@ class MovieNotesController {
             throw new AppError('Rating desse filme deve ser um número entre 1 e 5!');
         }
 
-        const checkNameOfTagsOnNote = tags.some(tag => tagsOnNote.some(tagOnNote => tagOnNote.name === tag));
-        
-        if(checkNameOfTagsOnNote) {
-            throw new AppError('Uma ou mais tags adicionadas já estão cadastradas')
-        }
-
         const updatedNote = {
             description: description ?? note.description,
             rating: rating ?? note.rating,
         }
 
-        const tagsInsert = tags.map(name => {
-            return {
+        await knex('movie_notes').where({user_id, id}).update(updatedNote);
+
+        if(tags){
+            const validTags = Array.isArray(tags) ? tags.filter(tag => tag && tag.trim()) : [];
+            
+            const checkNameOfTagsOnNote = tags.some(tag => tagsOnNote.some(tagOnNote => tagOnNote.name === tag));
+
+            if(checkNameOfTagsOnNote) {
+                throw new AppError('Uma ou mais tags adicionadas já estão cadastradas')
+            }
+
+            const tagsInsert = validTags.map(name => ({
                 note_id: id,
                 user_id,
                 name
-            }
-        })
+            }));
 
-        await knex('movie_notes').where({user_id, id}).update(updatedNote);
-        
-        await knex('movie_tags').insert(tagsInsert);
+            await knex('movie_tags').insert(tagsInsert);
+        }
 
         return response.json({ message: 'Nota atualizada com sucesso!' });
     }
