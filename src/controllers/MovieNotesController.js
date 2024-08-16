@@ -42,6 +42,7 @@ class MovieNotesController {
         const { id } = request.query;
 
         const [note] = await knex('movie_notes').where({ user_id }).andWhere({ id });
+        const tagsOnNote = await knex('movie_tags').select('name').where({user_id, note_id: id});
 
         if(!note){
             throw new AppError('Nota não foi encontrada!');
@@ -51,14 +52,44 @@ class MovieNotesController {
             throw new AppError('Rating desse filme deve ser um número entre 1 e 5!');
         }
 
-        const updatedNote = {
-            description: description ?? note.description,
-            rating: rating ?? note.rating
+        const checkNameOfTagsOnNote = tags.some(tag => tagsOnNote.some(tagOnNote => tagOnNote.name === tag));
+        
+        if(checkNameOfTagsOnNote) {
+            throw new AppError('Uma ou mais tags adicionadas já estão cadastradas')
         }
 
-        await knex('movie_notes').where({user_id, id}).update(updatedNote)
+        const updatedNote = {
+            description: description ?? note.description,
+            rating: rating ?? note.rating,
+        }
+
+        const tagsInsert = tags.map(name => {
+            return {
+                note_id: id,
+                user_id,
+                name
+            }
+        })
+
+        await knex('movie_notes').where({user_id, id}).update(updatedNote);
+        
+        await knex('movie_tags').insert(tagsInsert);
 
         return response.json({ message: 'Nota atualizada com sucesso!' });
+    }
+
+    async delete(request, response) {
+        const { id } = request.params;
+
+        const note = await knex('movie_notes').where({ id });
+
+        if(!note) {
+            throw new AppError('Nota não foi encontrada!');
+        }
+
+        await knex('movie_notes').where({ id }).delete();
+
+        return response.json({ message: 'Nota deletada com sucesso!' });
     }
 }
 
