@@ -1,12 +1,12 @@
 const { Router } = require('express');
 
 const TagsController = require('../controllers/TagsController');
+const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
 
-const movieTagsRouter = Router();
+const movieTagsRoutes = Router();
 
 const movieTagsController = new TagsController();
 
-movieTagsRouter.get("/:user_id", movieTagsController.index)
+movieTagsRoutes.get("/", ensureAuthenticated, movieTagsController.index)
 
-
-module.exports = movieTagsRouter;
+module.exports = movieTagsRoutes;

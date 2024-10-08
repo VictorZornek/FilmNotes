@@ -3,7 +3,7 @@ const AppError = require('../utils/AppError');
 
 class MovieNotesController {
     async create(request, response) {
-        const { user_id } = request.params;
+        const user_id = request.user.id;
         const { title, description, rating, tags } = request.body;
 
         if(rating < 1 || rating > 5) {
@@ -31,7 +31,7 @@ class MovieNotesController {
     }
 
     async update(request, response) {
-        const { user_id } = request.params;
+        const user_id = request.user.id;
         const { description, rating, tags } = request.body;
         const { id } = request.query;
 
@@ -102,7 +102,7 @@ class MovieNotesController {
     }
 
     async index(request, response) {
-        const { user_id } = request.params;
+        const user_id = request.user.id;
 
         const notes = await knex('movie_notes').where({ user_id });
 
