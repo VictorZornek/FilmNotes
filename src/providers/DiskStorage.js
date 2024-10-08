@@ -5,8 +5,8 @@ const uploadConfig = require("../configs/upload");
 class DiskStorage {
     async saveFile(file) {
         await fs.promises.rename(
-            path.resolve(uploadConfig.TMP_FOLDER, file),      // manda a imagem para a pasta temporária
-            path.resolve(uploadConfig.UPLOADS_FOLDER, file)   // manda para a pasta de uploads
+            path.resolve(uploadConfig.TMP_FOLDER, file),        // manda a imagem para a pasta temporária
+            path.resolve(uploadConfig.UPLOADS_FOLDER, file)     // manda para a pasta de uploads
         );
 
         return file;
@@ -17,13 +17,11 @@ class DiskStorage {
 
         try {
             await fs.promises.stat(filePath);
-
         } catch {
             return;
-
         }
 
-        await fs.promises.unlink(filePath);    // deleta o arquivo
+        await fs.promises.unlink(filePath);   // deleta o arquivo
     }
 }
 
