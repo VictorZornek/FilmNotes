@@ -5,6 +5,7 @@ const AppError = require('./utils/AppError');
 
 const uploadConfig = require("./configs/upload");
 
+const cors = require("cors") // importação do cors
 const express = require("express");  //importa o módulo do express
 const database = require("./database/sqlite");
 
@@ -12,6 +13,8 @@ const routes = require('./routes')
 
 const app = express();  // inicializa o app com express
 app.use(express.json());
+
+app.use(cors());
 
 app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER))
 app.use(routes);
